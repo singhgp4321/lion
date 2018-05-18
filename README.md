@@ -1,4 +1,5 @@
 lion is a app to do something useful.
+this is a second change.
 =====
 
 "Fork lion" to create a new MOOSE-based application.
