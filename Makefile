@@ -27,15 +27,15 @@ include $(FRAMEWORK_DIR)/moose.mk
 ALL_MODULES         := no
 
 CHEMICAL_REACTIONS  := no
-CONTACT             := no
+CONTACT             := yes
 FLUID_PROPERTIES    := no
-HEAT_CONDUCTION     := no
+HEAT_CONDUCTION     := yes
 MISC                := no
 NAVIER_STOKES       := no
 PHASE_FIELD         := no
 RDG                 := no
 RICHARDS            := no
-SOLID_MECHANICS     := no
+SOLID_MECHANICS     := yes
 STOCHASTIC_TOOLS    := no
 TENSOR_MECHANICS    := no
 WATER_STEAM_EOS     := no

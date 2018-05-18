@@ -1,4 +1,11 @@
 #include "lionApp.h"
+
+#include "ElectricPotential.h"
+#include "CurrentAux.h"
+#include "SiC.h"
+#include "Graphite.h"
+#include "HeatConduction.h"
+
 #include "Moose.h"
 #include "AppFactory.h"
 #include "ModulesApp.h"
@@ -21,7 +28,7 @@ lionApp::lionApp(InputParameters parameters) : MooseApp(parameters)
   Moose::associateSyntax(_syntax, _action_factory);
   ModulesApp::associateSyntax(_syntax, _action_factory);
   lionApp::associateSyntax(_syntax, _action_factory);
-
+  
   Moose::registerExecFlags(_factory);
   ModulesApp::registerExecFlags(_factory);
   lionApp::registerExecFlags(_factory);
@@ -39,6 +46,12 @@ void
 lionApp::registerObjects(Factory & factory)
 {
     Registry::registerObjectsTo(factory, {"lionApp"});
+    registerKernel(ElectricPotential);
+    registerKernel(HeatConductionKernel);
+    registerAux(CurrentAux);
+    registerMaterial(SiC);
+    registerMaterial(Graphite);
+
 }
 
 void
