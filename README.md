@@ -1,4 +1,4 @@
-lion
+lion is a app to do something useful.
 =====
 
 "Fork lion" to create a new MOOSE-based application.
