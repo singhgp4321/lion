@@ -1,6 +1,5 @@
 <<<<<<< HEAD
-lion is a app to do something useful.
-this is a second change.
+lion is a app to model thermal behavior of pellet-die-punch sintering system
 =====
 
 "Fork lion" to create a new MOOSE-based application.
