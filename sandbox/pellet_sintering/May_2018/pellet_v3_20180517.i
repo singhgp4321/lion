@@ -63,7 +63,7 @@
     type = JouleHeatingSource
     variable = temp
     elec = electric_potential
-    block = 'die'
+    block = 'pellet die upper_punch lower_punch'
   [../]
 []
 
@@ -105,6 +105,8 @@
     variable = temp
     gap_geometry_type = PLATE
   [../]
+
+# The following contacts are for electric_potential
 
   [./pellet_die_gap_current]
     type = GapHeatTransfer
@@ -151,25 +153,70 @@
 []
 
 [BCs]
-  [./bottom_potential]
+  # The following bc are for electric_potential
+
+  [./top_potential_upper_punch]
     type = DirichletBC
     variable = electric_potential
-    boundary = 'upper_punch_top die_top'
+    boundary = 'upper_punch_top'
     value = 10
   [../]
 
-  [./top_potential]
+  [./bottom_potential_upper_punch]
     type = DirichletBC
     variable = electric_potential
-    boundary = 'lower_punch_bottom die_bottom'
+    boundary = 'upper_punch_bottom'
+    value = 6
+  [../]
+
+  [./bottom_potential_pellet]
+    type = DirichletBC
+    variable = electric_potential
+    boundary = 'pellet_top'
+    value = 6
+  [../]
+
+  [./top_potential_pellet]
+    type = DirichletBC
+    variable = electric_potential
+    boundary = 'pellet_bottom'
+    value = 4
+  [../]
+
+  [./top_potential_lower_punch]
+    type = DirichletBC
+    variable = electric_potential
+    boundary = 'lower_punch_top'
+    value = 4
+  [../]
+
+  [./bottom_potential_lower_punch]
+    type = DirichletBC
+    variable = electric_potential
+    boundary = 'lower_punch_bottom'
     value = 0
   [../]
+  [./top_potential_die]
+    type = DirichletBC
+    variable = electric_potential
+    boundary = 'die_top'
+    value = 8
+  [../]
+
+  [./bottom_potential_die]
+    type = DirichletBC
+    variable = electric_potential
+    boundary = 'die_bottom'
+    value = 2
+  [../]
+
+  # The following bc are for temperature
 
   [./top_temp]
     type = DirichletBC
     variable = temp
     boundary = 'upper_punch_top'
-    value = 400
+    value = 350
   [../]
 
   [./bottom_temp]

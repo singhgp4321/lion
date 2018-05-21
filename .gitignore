@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .libs
 *.la
 *.lo
@@ -207,3 +208,37 @@ python/peacock/tests/postprocessor_tab/TestPostprocessorPluginManager_test_scrip
 !python/peacock/tests/**/gold/*.png
 !python/peacock/icons/**/*.*
 !python/peacock/tests/**/input/*.*
+=======
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+>>>>>>> 95a48767afcfe15ef3ef2b6d7250ee6f4c297fb7
