@@ -34,7 +34,7 @@ void
 SiC::computeQpProperties()
 {
   _specific_heat[_qp] = 1000.0; // (J/kg-K)
-  _thermal_conductivity[_qp] = 50.0;       // (W/m-K)
-  _electrical_conductivity[_qp] = 100000.0;       // (S/m)
-  _density[_qp] = 1000.0;       // (kg/m^3)
+  _thermal_conductivity[_qp] = 300.0;       // (W/m-K)
+  _electrical_conductivity[_qp] = 1000.0;       // (S/m)
+  _density[_qp] = 3210.0;       // (kg/m^3)
 }

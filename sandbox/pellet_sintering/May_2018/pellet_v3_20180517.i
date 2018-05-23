@@ -1,5 +1,20 @@
+[Problem]
+  type = FEProblem
+  coord_type = RZ
+  rz_coord_axis = Y
+[]
+
 [Mesh]
   file = pellet_v4_20180517.e
+[]
+
+[Functions]
+
+  [./ramp]
+    type = PiecewiseLinear
+    x = '0   1   2'
+    y = '100 200 200'
+  [../]
 []
 
 [Variables]
@@ -159,35 +174,35 @@
     type = DirichletBC
     variable = electric_potential
     boundary = 'upper_punch_top'
-    value = 10
+    value = 4
   [../]
 
   [./bottom_potential_upper_punch]
     type = DirichletBC
     variable = electric_potential
     boundary = 'upper_punch_bottom'
-    value = 6
+    value = 2.05
   [../]
 
   [./bottom_potential_pellet]
     type = DirichletBC
     variable = electric_potential
     boundary = 'pellet_top'
-    value = 6
+    value = 2.05
   [../]
 
   [./top_potential_pellet]
     type = DirichletBC
     variable = electric_potential
     boundary = 'pellet_bottom'
-    value = 4
+    value = 1.95
   [../]
 
   [./top_potential_lower_punch]
     type = DirichletBC
     variable = electric_potential
     boundary = 'lower_punch_top'
-    value = 4
+    value = 1.95
   [../]
 
   [./bottom_potential_lower_punch]
@@ -200,30 +215,44 @@
     type = DirichletBC
     variable = electric_potential
     boundary = 'die_top'
-    value = 8
+    value = 3.5
   [../]
 
   [./bottom_potential_die]
     type = DirichletBC
     variable = electric_potential
     boundary = 'die_bottom'
-    value = 2
+    value = 0.5
   [../]
 
   # The following bc are for temperature
 
-  [./top_temp]
+  [./upper_punch_top_temp]
     type = DirichletBC
     variable = temp
     boundary = 'upper_punch_top'
-    value = 350
+    value = 700
   [../]
 
-  [./bottom_temp]
+  [./lower_punch_bottom_temp]
     type = DirichletBC
     variable = temp
     boundary = 'lower_punch_bottom'
-    value = 350
+    value = 700
+  [../]
+
+  [./die_top_temp]
+    type = DirichletBC
+    variable = temp
+    boundary = 'die_top'
+    value = 1000
+  [../]
+
+  [./die_bottom_temp]
+    type = DirichletBC
+    variable = temp
+    boundary = 'die_bottom'
+    value = 1000
   [../]
 []
 
@@ -244,12 +273,6 @@
     type = Graphite
     block = 'upper_punch'
   [../]
-[]
-
-[Problem]
-  type = FEProblem
-  coord_type = RZ
-  rz_coord_axis = Y
 []
 
 [Preconditioning]
@@ -287,8 +310,31 @@
 
 [Executioner]
   type = Transient
-  num_steps = 100
+
+  nl_abs_tol = 1e-3
+  nl_rel_tol = 1e-8
+  nl_max_its = 30
+
+  l_tol = 1e-6
+  l_max_its = 100
+
+  start_time = 0.0
+  end_time = 1200.0
+  num_steps = 500
+
+  dtmax = 10.0
+  dtmin = 1.0
+
+  [./TimeStepper]
+    type = IterationAdaptiveDT
+    dt = 1
+    optimal_iterations = 12
+    iteration_window = 1
+    linear_iteration_ratio = 100
+  [../]
 []
+
+
 
 [Outputs]
   execute_on = 'timestep_end'
