@@ -6,6 +6,10 @@
 #include "Graphite.h"
 #include "HeatConduction.h"
 
+#include "InterpolateFunction.h"
+#include "InterpolateFunction3pt.h"
+
+
 #include "Moose.h"
 #include "AppFactory.h"
 #include "ModulesApp.h"
@@ -51,6 +55,8 @@ lionApp::registerObjects(Factory & factory)
     registerAux(CurrentAux);
     registerMaterial(SiC);
     registerMaterial(Graphite);
+    registerFunction(InterpolateFunction);
+    registerFunction(InterpolateFunction3pt);
 
 }
 

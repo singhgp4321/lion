@@ -35,9 +35,9 @@ void
 Graphite::computeQpProperties()
 {
   _specific_heat[_qp] = 720.0; // (J/kg-K)
-  _thermal_conductivity[_qp] = 80.0;       // (W/m-K)
-  _electrical_conductivity[_qp] = 100000.0;       // (S/m)
-  _density[_qp] = 2266.0;       // (kg/m^3)
+  _thermal_conductivity[_qp] = 104.4; // (W/m-K) from IBIDEN Fine Graphite Material.pdf
+  _electrical_conductivity[_qp] = 71428.6;  // (S/m) from IBIDEN Fine Graphite Material.pdf
+  _density[_qp] = 1750.0;       // (kg/m^3) IBIDEN Fine Graphite Material.pdf
 
 }
 
