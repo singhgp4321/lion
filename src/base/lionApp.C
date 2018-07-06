@@ -9,6 +9,8 @@
 #include "InterpolateFunction.h"
 #include "InterpolateFunction3pt.h"
 
+#include "ControlledFunctionPenaltyDirichletBC.h"
+
 
 #include "Moose.h"
 #include "AppFactory.h"
@@ -57,6 +59,7 @@ lionApp::registerObjects(Factory & factory)
     registerMaterial(Graphite);
     registerFunction(InterpolateFunction);
     registerFunction(InterpolateFunction3pt);
+    registerBoundaryCondition(ControlledFunctionPenaltyDirichletBC);
 
 }
 
