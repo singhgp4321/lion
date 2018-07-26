@@ -4,6 +4,8 @@
 #include "CurrentAux.h"
 #include "SiC.h"
 #include "Graphite.h"
+#include "SiC_Mechanical.h"
+#include "Graphite_Mechanical.h"
 #include "HeatConduction.h"
 
 #include "InterpolateFunction.h"
@@ -57,6 +59,8 @@ lionApp::registerObjects(Factory & factory)
     registerAux(CurrentAux);
     registerMaterial(SiC);
     registerMaterial(Graphite);
+    registerMaterial(SiC_Mechanical);
+    registerMaterial(Graphite_Mechanical);
     registerFunction(InterpolateFunction);
     registerFunction(InterpolateFunction3pt);
     registerBoundaryCondition(ControlledFunctionPenaltyDirichletBC);

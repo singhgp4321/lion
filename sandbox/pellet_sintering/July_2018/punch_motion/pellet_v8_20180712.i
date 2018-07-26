@@ -1,15 +1,25 @@
+[GlobalParams]
+  # Set initial fuel density, other global parameters
+  disp_x = disp_x
+  disp_y = disp_y
+  order = FIRST
+  family = LAGRANGE
+[]
+
+
 [Problem]
   type = FEProblem
   coord_type = RZ
   rz_coord_axis = Y
 []
 
-[GlobalParams]
-  displacements = 'disp_x disp_y'
-[]
-
 [Mesh]
-  file = pellet_v5_20180529.e
+  file = pellet_v4_20180517.e
+  displacements = 'disp_x disp_y'
+  patch_size = 10 # For contact algorithm
+  patch_update_strategy = iteration #auto
+#  partitioner = centroid
+#  centroid_partitioner_direction = y
 []
 
 [Functions]
@@ -49,24 +59,16 @@
 
 []
 
-[Modules]
-  [./TensorMechanics]
-    [./Master]
-      [./all]
-        strain = SMALL
-        incremental = true
-        add_variables = true
-        eigenstrain_names = eigenstrain
-        generate_output = 'strain_xx strain_yy'
-      [../]
-    [../]
-  [../]
-[]
-
 [Variables]
   [./electric_potential]
     order = FIRST
     family = LAGRANGE
+  [../]
+
+  [./disp_x]
+  [../]
+
+  [./disp_y]
   [../]
 
   [./temp]
@@ -82,6 +84,19 @@
     family = MONOMIAL
   [../]
   [./current_y]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+
+  [./stress_xx]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_yy]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_zz]
     order = CONSTANT
     family = MONOMIAL
   [../]
@@ -102,6 +117,37 @@
     component = y
     execute_on = timestep_end
     potential_variable = electric_potential
+  [../]
+
+  [./stress_xx]               # computes stress components for output
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_xx
+    index = 0
+    execute_on = timestep_end # for efficiency, only compute at the end of a timestep
+  [../]
+  [./stress_yy]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_yy
+    index = 1
+    execute_on = timestep_end
+  [../]
+  [./stress_zz]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_zz
+    index = 2
+    execute_on = timestep_end
+  [../]
+[]
+
+[SolidMechanics]
+  # Specify that we need solid mechanics (divergence of stress)
+  [./solid]
+    disp_r = disp_x
+    disp_z = disp_y
+    temp = temp
   [../]
 []
 
@@ -140,14 +186,14 @@
   [./lower_punch_die_gap]
     type = GapHeatTransfer
     master = die_inner
-    slave = lower_punch_outer_contact
+    slave = lower_punch_outer
     gap_conductivity = 0.001
     variable = temp
   [../]
   [./upper_punch_die_gap]
     type = GapHeatTransfer
     master = die_inner
-    slave = upper_punch_outer_contact
+    slave = upper_punch_outer
     gap_conductivity = 0.001
     variable = temp
   [../]
@@ -181,7 +227,7 @@
   [./lower_punch_die_gap_current]
     type = GapHeatTransfer
     master = die_inner
-    slave = lower_punch_outer_contact
+    slave = lower_punch_outer
     gap_conductivity = 0.001
     variable = electric_potential
     appended_property_name = 2
@@ -189,7 +235,7 @@
   [./upper_punch_die_gap_current]
     type = GapHeatTransfer
     master = die_inner
-    slave = upper_punch_outer_contact
+    slave = upper_punch_outer
     gap_conductivity = 0.001
     variable = electric_potential
     appended_property_name = 2
@@ -284,17 +330,19 @@
   [../]
 
   [./upper_punch_temp]
-    type = FunctionDirichletBC
+    type = ControlledFunctionPenaltyDirichletBC
     variable = temp
-    boundary = 'upper_punch_outer_no-contact'
+    boundary = 'upper_punch_outer'
     function = interpolate_upper_punch_outer_temp
+    penalty = 1e5
   [../]
 
   [./lower_punch_temp]
-    type = FunctionDirichletBC
+    type = ControlledFunctionPenaltyDirichletBC
     variable = temp
-    boundary = 'lower_punch_outer_no-contact'
+    boundary = 'lower_punch_outer'
     function = interpolate_lower_punch_outer_temp
+    penalty = 1e5
   [../]
 
   [./die_top_and_bottom_temp]
@@ -311,16 +359,62 @@
     function = interpolate_die_outer_temp
   [../]
 
-  [./horizontal_disp]
+
+  # The following boundary conditions are for displacements
+
+  [./no_x_upperPunch]
     type = DirichletBC
     variable = disp_x
-    boundary = 'pellet_inner die_inner upper_punch_inner lower_punch_inner'
+    boundary = 'upper_punch_top'
     value = 0.0
   [../]
-  [./y_bot]
+
+  [./no_y_upperPunch]
     type = DirichletBC
     variable = disp_y
-    boundary = 'pellet_bottom die_bottom upper_punch_bottom lower_punch_bottom'
+    boundary = 'upper_punch_top'
+    value = 0.0
+  [../]
+
+  [./no_x_lowerPunch]
+    type = DirichletBC
+    variable = disp_x
+    boundary = 'lower_punch_top'
+    value = 0.0
+  [../]
+
+  [./no_y_lowerPunch]
+    type = DirichletBC
+    variable = disp_y
+    boundary = 'lower_punch_top'
+    value = 0.0
+  [../]
+
+  [./no_x_pellet]
+    type = DirichletBC
+    variable = disp_x
+    boundary = 'pellet_top'
+    value = 0.0
+  [../]
+
+  [./no_y_pellet]
+    type = DirichletBC
+    variable = disp_y
+    boundary = 'pellet_top'
+    value = 0.0
+  [../]
+
+  [./no_x_die]
+    type = DirichletBC
+    variable = disp_x
+    boundary = 'die_top'
+    value = 0.0
+  [../]
+
+  [./no_y_die]
+    type = DirichletBC
+    variable = disp_y
+    boundary = 'die_top'
     value = 0.0
   [../]
 []
@@ -328,35 +422,44 @@
 [Materials]
   [./Pellet]
     type = SiC
+    block = 'pellet'
   [../]
+
   [./Die]
     type = Graphite
     block = 'die'
   [../]
+
   [./Lower_punch]
     type = Graphite
     block = 'lower_punch'
   [../]
+
   [./Upper_punch]
     type = Graphite
     block = 'upper_punch'
   [../]
 
-  [./elasticity_tensor]
-    type = ComputeIsotropicElasticityTensor
-    youngs_modulus = 2.1e5
-    poissons_ratio = 0.3
+  [./SiC-mechanical]
+    type = SiC_Mechanical
+    block = 'pellet'
+    disp_r = disp_x
+    disp_z = disp_y
+    temp = temp
+    youngs_modulus = 100e9
+    poissons_ratio = 0.20
   [../]
-  [./small_stress]
-    type = ComputeFiniteStrainElasticStress
+
+  [./Graphite-mechanical]
+    type = Graphite_Mechanical
+    block = 'die upper_punch lower_punch'
+    disp_r = disp_x
+    disp_z = disp_y
+    temp = temp
+    youngs_modulus = 100e9
+    poissons_ratio = 0.20
   [../]
-  [./thermal_expansion_strain]
-    type = ComputeThermalExpansionEigenstrain
-    stress_free_temperature = 298
-    thermal_expansion_coeff = 1.3e-5
-    temperature = temp
-    eigenstrain_name = eigenstrain
-  [../]
+
 []
 
 [Preconditioning]
@@ -390,6 +493,7 @@
       petsc_options_iname = '-pc_type'
       petsc_options_value = 'lu'
   [../]
+
 []
 
 [Executioner]
@@ -406,7 +510,7 @@
   end_time = 1200.0
   num_steps = 500
 
-  dtmax = 10.0
+  dtmax = 50.0
   dtmin = 1.0
 
   [./TimeStepper]
